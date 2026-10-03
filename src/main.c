@@ -1,87 +1,164 @@
 #include <stdio.h>
+
 #include "../include/package.h"
 #include "../include/warehouse.h"
 #include "../include/knapsack.h"
+#include "../include/tsp.h"
 
-int main() {
+int main()
+{
+  Warehouse warehouse;
+  initialize_warehouse(&warehouse, 15.0);
 
-    Warehouse warehouse;
+  int choice;
+  int next_id = 1;
 
-    initialize_warehouse(&warehouse, 15.0);
+  do
+  {
+    printf("\n================================\n");
+    printf("       WAREHOUSE OPTIMIZER\n");
+    printf("================================\n");
 
-    int choice;
-    int next_id = 1;
+    printf("1. Add Package\n");
+    printf("2. View All Packages\n");
+    printf("3. Optimize Package Selection\n");
+    printf("4. Find Shortest Delivery Route\n");
+    printf("5. Exit\n");
 
-    do {
+    printf("\nEnter your choice: ");
+    scanf("%d", &choice);
 
-        printf("\n================================\n");
-        printf("       WAREHOUSE OPTIMIZER\n");
-        printf("================================\n");
+    switch (choice)
+    {
 
-        printf("1. Add Package\n");
-        printf("2. View All Packages\n");
-        printf("3. Optimize Package Selection\n");
-        printf("4. Exit\n");
+    case 1:
+    {
+      char name[50];
+      float weight, value;
 
-        printf("\nEnter your choice: ");
-        scanf("%d", &choice);
+      printf("Enter package name: ");
+      scanf(" %49[^\n]", name);
 
-        switch (choice) {
+      printf("Enter weight (kg): ");
+      scanf("%f", &weight);
 
-            case 1: {
+      printf("Enter value: ");
+      scanf("%f", &value);
 
-                char name[50];
-                float weight, value;
+      if (weight <= 0 || value < 0)
+      {
+        printf("Invalid weight or value!\n");
+        break;
+      }
 
-                printf("Enter package name: ");
-                scanf(" %49[^\n]", name);
+      Package p = create_package(
+          next_id++, name, weight, value);
 
-                printf("Enter weight (kg): ");
-                scanf("%f", &weight);
+      if (add_package(&warehouse, p))
+      {
+        printf("Package added successfully!\n");
+      }
 
-                printf("Enter value: ");
-                scanf("%f", &value);
+      break;
+    }
 
-                if (weight <= 0 || value < 0) {
-                    printf("Invalid weight or value!\n");
-                    break;
-                }
+    case 2:
+      display_warehouse(warehouse);
+      break;
 
-                Package p = create_package(
-                    next_id++, name, weight, value
-                );
+    case 3:
+    {
+      int selected[MAX_PACKAGES];
+      solve_knapsack(&warehouse, selected);
+      break;
+    }
 
-                if (add_package(&warehouse, p)) {
-                    printf("Package added successfully!\n");
-                }
+    case 4:
+    {
+      int n;
 
-                break;
-            }
+      Location locations[MAX_LOCATIONS];
 
-            case 2:
+      int distances[MAX_LOCATIONS][MAX_LOCATIONS] = {0};
 
-                display_warehouse(warehouse);
-                break;
+      int route[MAX_LOCATIONS + 1];
 
-            case 3: {
+      printf("\n===== DELIVERY ROUTE OPTIMIZER =====\n");
 
-                int selected[MAX_PACKAGES];
+      printf("Enter total locations (including Warehouse): ");
+      scanf("%d", &n);
 
-                solve_knapsack(&warehouse, selected);
-                break;
-            }
+      if (n < 2 || n > MAX_LOCATIONS)
+      {
+        printf("Please enter between 2 and %d locations.\n",
+               MAX_LOCATIONS);
+        break;
+      }
 
-            case 4:
+      locations[0] = create_location(0, "Warehouse");
 
-                printf("Exiting WarehouseOptimizer...\n");
-                break;
+      for (int i = 1; i < n; i++)
+      {
+        char name[50];
 
-            default:
+        printf("Enter name of Customer %d: ", i);
+        scanf(" %49[^\n]", name);
 
-                printf("Invalid choice! Try again.\n");
+        locations[i] = create_location(i, name);
+      }
+
+      printf("\nEnter distances between locations (in km):\n");
+
+      for (int i = 0; i < n; i++)
+      {
+        for (int j = i + 1; j < n; j++)
+        {
+          printf("%s to %s: ",
+                 locations[i].name,
+                 locations[j].name);
+
+          scanf("%d", &distances[i][j]);
+
+          distances[j][i] = distances[i][j];
+        }
+      }
+
+      int minimum_distance =
+          solve_tsp(distances, n, route);
+
+      if (minimum_distance >= 0)
+      {
+        printf("\n===== OPTIMIZED DELIVERY ROUTE =====\n");
+
+        for (int i = 0; i <= n; i++)
+        {
+          printf("%s", locations[route[i]].name);
+
+          if (i < n)
+          {
+            printf(" -> ");
+          }
         }
 
-    } while (choice != 4);
+        printf("\nMinimum Distance: %d km\n",
+               minimum_distance);
+      }
+      else
+      {
+        printf("Unable to calculate route.\n");
+      }
 
-    return 0;
+      break;
+    }
+    case 5:
+      printf("Exiting WarehouseOptimizer...\n");
+      break;
+
+    default:
+      printf("Invalid choice! Try again.\n");
+    }
+
+  } while (choice != 5);
+
+  return 0;
 }
