@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-Package create_package(int id, const char *name,
-                       float weight, float value) {
+Package create_package(int id, const char *name,float weight, float value) {
 
     Package p;
 

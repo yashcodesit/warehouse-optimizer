@@ -3,6 +3,11 @@
 
 #include "warehouse.h"
 
-float solve_knapsack(Warehouse *w, int selected[]);
+#define MAX_DP_CAPACITY 100000
+
+float solve_knapsack(
+    Warehouse *w,
+    int selected[]
+);
 
 #endif
