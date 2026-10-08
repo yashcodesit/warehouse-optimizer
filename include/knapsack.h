@@ -5,9 +5,6 @@
 
 #define MAX_DP_CAPACITY 100000
 
-float solve_knapsack(
-    Warehouse *w,
-    int selected[]
-);
+float solve_knapsack(Warehouse *w, int selected[], int display);
 
 #endif
