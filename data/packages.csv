@@ -1,5 +1,11 @@
 id,name,weight,value
-1,laptop,2.00,50.00
-2,monitor,3.00,400.00
-3,keyboard,1.00,100.00
-4,printer,5.00,350.00
+1,Laptop,2.50,60000.00
+2,Monitor,4.00,12000.00
+3,Keyboard,0.80,1500.00
+4,Mouse,0.30,800.00
+5,Printer,6.00,10000.00
+6,Tablet,1.20,25000.00
+7,Headphones,0.50,3000.00
+8,Desktop PC,8.00,45000.00
+9,Webcam,0.40,2000.00
+10,UPS,5.00,7000.00
